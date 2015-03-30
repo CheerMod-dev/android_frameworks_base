@@ -2,6 +2,8 @@
 <!--
 /* apps/common/assets/default/default/skins/StatusBar.xml
 **
+** Copyright (c) 2012-2014 The Linux Foundation. All rights reserved.
+** Not a Contribution.
 ** Copyright 2006, The Android Open Source Project
 **
 ** Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -22,7 +24,7 @@
 <com.android.systemui.statusbar.phone.PhoneStatusBarView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:systemui="http://schemas.android.com/apk/res/com.android.systemui"
-    android:id="@+id/status_bar"
+    android:id="@+id/msim_status_bar"
     android:background="@drawable/system_bar_background"
     android:orientation="vertical"
     android:focusable="true"
@@ -43,8 +45,8 @@
     <LinearLayout android:id="@+id/status_bar_contents"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingStart="6dp"
-        android:paddingEnd="8dp"
+        android:paddingStart="6dip"
+        android:paddingEnd="6dip"
         android:orientation="horizontal"
         >
 
@@ -102,24 +104,15 @@
                 android:layout_height="match_parent"
                 android:gravity="right|center_vertical"/>
 
-            <include layout="@layout/system_icons" />
+            <include layout="@layout/msim_system_icons" />
 
             <com.android.systemui.BatteryLevelTextView android:id="@+id/battery_level_text"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_gravity="center_vertical"
-               android:layout_marginStart="@dimen/header_battery_margin_keyguard"
-               android:textColor="#ffffff"
-               android:textSize="@dimen/battery_level_text_size" />
-
-            <com.android.systemui.DockBatteryLevelTextView android:id="@+id/dock_battery_level_text"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_gravity="center_vertical"
-               android:layout_marginStart="@dimen/header_battery_margin_keyguard"
-               android:textColor="#ffffff"
-               android:textSize="@dimen/battery_level_text_size"
-               android:visibility="gone" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/header_battery_margin_keyguard"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/battery_level_text_size" />
 
             <TextView
                 android:id="@+id/clock"
@@ -127,7 +120,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:singleLine="true"
-                android:paddingStart="7dp"
+                android:paddingStart="6dip"
                 android:gravity="center_vertical|start"
                 />
         </com.android.keyguard.AlphaOptimizedLinearLayout>
