@@ -542,6 +542,11 @@ public class TaskStackView extends FrameLayout implements TaskStack.TaskStackCal
         tv.dismissTask(0L);
     }
 
+    private boolean dismissAll() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+            Settings.System.RECENTS_CLEAR_ALL_DISMISS_ALL, 1) == 1;
+    }
+
     /** Resets the focused task. */
     void resetFocusedTask() {
         if ((0 <= mFocusedTaskIndex) && (mFocusedTaskIndex < mStack.getTaskCount())) {
@@ -568,8 +573,7 @@ public class TaskStackView extends FrameLayout implements TaskStack.TaskStackCal
                 tasks.remove(tv.getTask());
                 tv.dismissTask(dismissDelay);
                 dismissDelay += delay;
-            }
-        }
+                         }
 
         // Remove any other Tasks
         for (Task t : tasks) {
@@ -585,7 +589,9 @@ public class TaskStackView extends FrameLayout implements TaskStack.TaskStackCal
             public void run() {
                 // And remove all the excluded or all the other tasks
                 SystemServicesProxy ssp = RecentsTaskLoader.getInstance().getSystemServicesProxy();
-                ssp.removeAllUserTask(UserHandle.myUserId());
+                if (size > 0) {
+                    ssp.removeAllUserTask(UserHandle.myUserId());
+                }
             }
         }, mConfig.taskViewRemoveAnimDuration);
     }
