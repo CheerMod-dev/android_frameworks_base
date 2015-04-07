@@ -3415,6 +3415,23 @@ public final class Settings {
 
         /**
          * Start volume fraction for increasing ring volume
+         * Setting Power Save
+         * 0: Off the Power Save
+         * 1: On the Power Save Off screen
+         * @hide
+         */
+         public static final String POWER_SAVE_SETTINGS = "power_save_settings";
+
+        /**
+         * Setting Power Save
+         * 0: LOW BATTERY
+         * 1: HIGH BATTERY
+         * @hide
+         */
+         public static final String POWER_SAVE_SETTINGS_TRIGGER_LEVEL= "power_save_settings_battery";
+
+        /**
+         * Put on your ear, and this will automatically call current number in dialer
          * @hide
          */
         public static final String INCREASING_RING_START_VOLUME = "increasing_ring_start_vol";

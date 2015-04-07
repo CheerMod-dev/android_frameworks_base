@@ -154,6 +154,10 @@ public class PerfProfileTile extends QSTile<PerfProfileTile.ProfileState> {
 
     private void changeToProfile(int profileIndex) {
         mPm.setPowerProfile(mPerfProfileValues[profileIndex]); // content observer will notify
+        }
+        Settings.System.putInt(mContext.getContentResolver(),
+            Settings.System.POWER_SAVE_SETTINGS, current == 1 ? 1 : 0);
+        mPm.setPowerProfile(mPerfProfileValues[current]); // content observer will notify
     }
 
     public static class ProfileState extends QSTile.State {
