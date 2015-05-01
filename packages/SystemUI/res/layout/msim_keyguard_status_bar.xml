@@ -44,7 +44,7 @@
         android:layout_toStartOf="@id/multi_user_switch"
         android:layout_alignWithParentIfMissing="true"
         android:layout_marginStart="16dp"
-        android:paddingEnd="@dimen/system_icons_keyguard_padding_end">
+        android:paddingEnd="2dp">
 
         <com.android.systemui.statusbar.policy.NetworkTraffic
             android:id="@+id/network_traffic"
@@ -58,7 +58,7 @@
             android:layout_height="@dimen/status_bar_height"
             android:layout_gravity="center_vertical"
             >
-            <include layout="@layout/system_icons" />
+            <include layout="@layout/msim_system_icons" />
         </FrameLayout>
         <com.android.systemui.BatteryLevelTextView android:id="@+id/battery_level_text"
             android:layout_width="wrap_content"
@@ -70,19 +70,9 @@
             android:visibility="gone"
             android:textSize="@dimen/battery_level_text_size"
             android:importantForAccessibility="noHideDescendants"/>
-        <com.android.systemui.DockBatteryLevelTextView android:id="@+id/dock_battery_level_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/header_battery_margin_keyguard"
-            android:paddingEnd="@dimen/battery_level_padding_end"
-            android:textColor="#ffffff"
-            android:visibility="gone"
-            android:textSize="@dimen/battery_level_text_size"
-            android:importantForAccessibility="noHideDescendants"/>
     </LinearLayout>
 
-    <com.android.keyguard.CarrierText
+    <com.android.systemui.statusbar.widget.CarrierLabel
         android:id="@+id/keyguard_carrier_text"
         android:layout_width="match_parent"
         android:layout_height="@dimen/status_bar_header_height_keyguard"
