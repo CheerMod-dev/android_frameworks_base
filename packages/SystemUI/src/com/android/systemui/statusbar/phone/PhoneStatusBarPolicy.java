@@ -254,6 +254,13 @@ public class PhoneStatusBarPolicy implements Callback {
         updateVolumeZen();
     }
 
+    private final void updateHeadset(Intent intent) {
+        int state = intent.getIntExtra("state", 0);
+        boolean mHeadsetIcon = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.SHOW_HEADSET_ICON, 1) == 1;
+        mService.setIconVisibility(SLOT_HEADSET, (state == 1 && mHeadsetIcon)  ? true : false);
+    }
+
     private void updateAlarm() {
         final AlarmClockInfo alarm = mAlarmManager.getNextAlarmClock(UserHandle.USER_CURRENT);
         final boolean hasAlarm = alarm != null && alarm.getTriggerTime() > 0;
