@@ -2186,6 +2186,7 @@ public final class ActivityManagerService extends ActivityManagerNative
         mSystemThread = ActivityThread.currentActivityThread();
 
         Slog.i(TAG, "Memory class: " + ActivityManager.staticGetMemoryClass());
+        PreventRunningUtils.init(this);
 
         mHandlerThread = new ServiceThread(TAG,
                 android.os.Process.THREAD_PRIORITY_FOREGROUND, false /*allowIo*/);
@@ -2888,6 +2889,9 @@ public final class ActivityManagerService extends ActivityManagerNative
             boolean knownToBeDead, int intentFlags, String hostingType, ComponentName hostingName,
             boolean allowWhileBooting, boolean isolated, int isolatedUid, boolean keepIfLarge,
             String abiOverride, String entryPoint, String[] entryPointArgs, Runnable crashHandler) {
+        if (!PreventRunningUtils.hookStartProcessLocked(info, knownToBeDead, intentFlags, hostingType, hostingName)) {
+            return null;
+        }
         long startTime = SystemClock.elapsedRealtime();
         ProcessRecord app;
         if (!isolated) {
@@ -3494,9 +3498,10 @@ public final class ActivityManagerService extends ActivityManagerNative
     public final int startActivity(IApplicationThread caller, String callingPackage,
             Intent intent, String resolvedType, IBinder resultTo, String resultWho, int requestCode,
             int startFlags, ProfilerInfo profilerInfo, Bundle options) {
-        return startActivityAsUser(caller, callingPackage, intent, resolvedType, resultTo,
+        return PreventRunningUtils.onStartActivity(
+            startActivityAsUser(caller, callingPackage, intent, resolvedType, resultTo,
             resultWho, requestCode, startFlags, profilerInfo, options,
-            UserHandle.getCallingUserId());
+            UserHandle.getCallingUserId()), caller, intent);
     }
 
     @Override
@@ -4859,6 +4864,7 @@ public final class ActivityManagerService extends ActivityManagerNative
             if (!app.killedByAm) {
                 Slog.i(TAG, "Process " + app.processName + " (pid " + pid
                         + ") has died");
+                PreventRunningUtils.onAppDied(app);
                 mAllowLowerMemLevel = true;
             } else {
                 // Note that we always want to do oom adj to update our state with the
@@ -5735,7 +5741,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                 // that match it.  We need to qualify this by the processes
                 // that are running under the specified app and user ID.
                 } else {
-                    final boolean isDep = app.pkgDeps != null
+                    final boolean isDep = PreventRunningUtils.isDep(app.pkgDeps)
                             && app.pkgDeps.contains(packageName);
                     if (!isDep && UserHandle.getAppId(app.uid) != appId) {
                         continue;
@@ -8644,6 +8650,8 @@ public final class ActivityManagerService extends ActivityManagerNative
         // Find any running services associated with this app and stop if needed.
         mServices.cleanUpRemovedTaskLocked(tr, component, new Intent(tr.getBaseIntent()));
 
+        PreventRunningUtils.onCleanUpRemovedTask(component);
+
         // Kill the running processes.
         for (int i = 0; i < procsToKill.size(); i++) {
             ProcessRecord pr = procsToKill.get(i);
@@ -8826,7 +8834,8 @@ public final class ActivityManagerService extends ActivityManagerNative
                         mStackSupervisor.showLockTaskToast();
                         return false;
                     }
-                    return ActivityRecord.getStackLocked(token).moveTaskToBackLocked(taskId);
+                    return PreventRunningUtils.onMoveActivityTaskToBack(
+                        ActivityRecord.getStackLocked(token).moveTaskToBackLocked(taskId), token);
                 }
             } finally {
                 Binder.restoreCallingIdentity(origId);
@@ -15409,9 +15418,11 @@ public final class ActivityManagerService extends ActivityManagerNative
         synchronized(this) {
             final int callingPid = Binder.getCallingPid();
             final int callingUid = Binder.getCallingUid();
+            PreventRunningUtils.setSenderInStartService(caller);
             final long origId = Binder.clearCallingIdentity();
-            ComponentName res = mServices.startServiceLocked(caller, service,
-                    resolvedType, callingPid, callingUid, userId);
+            ComponentName res = PreventRunningUtils.clearSenderInStartService(
+                mServices.startServiceLocked(caller, service,
+                    resolvedType, callingPid, callingUid, userId));
             Binder.restoreCallingIdentity(origId);
             return res;
         }
@@ -15633,8 +15644,10 @@ public final class ActivityManagerService extends ActivityManagerNative
         }
 
         synchronized(this) {
-            return mServices.bindServiceLocked(caller, token, service, resolvedType,
-                    connection, flags, userId);
+            PreventRunningUtils.setSenderInBindService(caller);
+            return PreventRunningUtils.clearSenderInBindService(
+                mServices.bindServiceLocked(caller, token, service, resolvedType,
+                    connection, flags, userId));
         }
     }
 
@@ -16651,12 +16664,14 @@ public final class ActivityManagerService extends ActivityManagerNative
             final ProcessRecord callerApp = getRecordForAppLocked(caller);
             final int callingPid = Binder.getCallingPid();
             final int callingUid = Binder.getCallingUid();
+            PreventRunningUtils.setSenderInBroadcastIntent(caller);
             final long origId = Binder.clearCallingIdentity();
-            int res = broadcastIntentLocked(callerApp,
+            int res = PreventRunningUtils.onBroadcastIntent(
+                broadcastIntentLocked(callerApp,
                     callerApp != null ? callerApp.info.packageName : null,
                     intent, resolvedType, resultTo,
                     resultCode, resultData, map, requiredPermission, appOp, serialized, sticky,
-                    callingPid, callingUid, userId);
+                    callingPid, callingUid, userId), intent);
             Binder.restoreCallingIdentity(origId);
             return res;
         }
