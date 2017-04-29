@@ -1033,7 +1033,7 @@ public class TaskStackView extends FrameLayout implements TaskStack.TaskStackCal
         if (mDismissAllButtonAnimating || mDismissAllButton.getVisibility() != View.VISIBLE ||
                 Float.compare(mDismissAllButton.getAlpha(), 0f) == 0) {
             mDismissAllButtonAnimating = true;
-            mDismissAllButton.setVisibility(View.INVISIBLE);
+            mDismissAllButton.setVisibility(View.VISIBLE);
             mDismissAllButton.showClearButton();
             mDismissAllButton.findViewById(R.id.dismiss_text).setAlpha(1f);
             mDismissAllButton.setAlpha(0f);
