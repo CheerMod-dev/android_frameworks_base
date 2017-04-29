@@ -434,7 +434,6 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
 
     public void endFABanimation() {
         // Animate the action button away
-        enableShake(false);
         mFloatingButton = ((View)getParent()).findViewById(R.id.floating_action_button);
         mFloatingButton.animate().alpha(0f)
                 .setStartDelay(0)
@@ -840,6 +839,8 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
             if (child != mSearchBar) {
                 TaskStackView stackView = (TaskStackView) child;
                 stackView.getStack().removeAllTasks();
-            }
-        }
-    }
+                        }
+                 }
+          }
+
+}
