@@ -455,9 +455,10 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
                 }
 
                 // Hide clear recents button before dismiss all tasks
-                startHideClearRecentsButtonAnimation();
+                //startHideClearRecentsButtonAnimation();
 
                 dismissAllTasksAnimated();
+                //startRefreshRecentsButtonAnimation();
             }
         });
     }
